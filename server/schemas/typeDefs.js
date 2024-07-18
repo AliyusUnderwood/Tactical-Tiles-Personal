@@ -1,17 +1,29 @@
-const { gql } = require('apollo-server-express');
-
-const typeDefs = gql`
+const typeDefs = `
   type User {
-    id: ID!
+    _id: ID!
     username: String!
     email: String!
+    games: [Game]!
   }
 
   type Game {
-    id: ID!
+    _id: ID!
     player: User!
     currentBoard: String!
     status: GameStatus!
+    moves: [Move]!
+    aiDifficulty: Int!
+    createdAt: String!
+    updatedAt: String!
+    lastMove: Move
+    isPlayerTurn: Boolean!
+  }
+
+  type Move {
+    from: String!
+    to: String!
+    piece: String!
+    timestamp: String!
   }
 
   enum GameStatus {
@@ -21,21 +33,30 @@ const typeDefs = gql`
     DRAW
   }
 
-  type AuthPayload {
-    token: String!
-    user: User!
+  enum AIDifficulty {
+    EASY
+    MEDIUM
+    HARD
+    EXPERT
+  }
+
+  type Auth {
+    token: ID!
+    user: User
   }
 
   type Query {
     me: User
-    game(id: ID!): Game
+    game(_id: ID!): Game
+    myGames: [Game]!
   }
 
   type Mutation {
-    signup(username: String!, email: String!, password: String!): AuthPayload!
-    login(email: String!, password: String!): AuthPayload!
-    createGame: Game!
-    makeMove(gameId: ID!, from: String!, to: String!): Game!
+    addUser(username: String!, email: String!, password: String!): Auth
+    login(email: String!, password: String!): Auth
+    createGame(aiDifficulty: AIDifficulty!): Game
+    makeMove(gameId: ID!, from: String!, to: String!): Game
+    deleteGame(_id: ID!): Game
   }
 `;
 
