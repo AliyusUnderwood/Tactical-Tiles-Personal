@@ -85,9 +85,7 @@ const resolvers = {
         const game = await Game.findById(gameId);
         if (!game) throw new Error('Game not found');
     
-        console.log('Current board state:', game.currentBoard);
         let boardState = JSON.parse(game.currentBoard);
-        console.log('Parsed board state:', JSON.stringify(boardState, null, 2));
         
         // Check if it's the player's turn
         if (boardState.turn.toLowerCase() !== 'white') {
@@ -95,18 +93,11 @@ const resolvers = {
         }
         
         try {
-          console.log(`Attempting player move from ${from} to ${to}`);
-          const currentFen = getFen(boardState);
-          console.log('Current FEN before move:', currentFen);
           
           // Get the piece before the move
           const playerPiece = boardState.pieces[from];
-          console.log('Player piece:', playerPiece);
           
           boardState = move(boardState, from, to);
-          
-          const newFen = getFen(boardState);
-          console.log('New FEN after move:', newFen);
           
           // Update game state with player's move
           game.currentBoard = JSON.stringify(boardState);
@@ -116,9 +107,7 @@ const resolvers = {
             to, 
             piece: playerPiece,
             timestamp: new Date() 
-          });
-      
-          console.log('Board state after player move:', game.currentBoard);
+          });      
       
           // Check for game over after player's move
           const gameStatus = status(boardState);
@@ -128,24 +117,14 @@ const resolvers = {
             game.status = 'DRAW';
           } else {
             // Make AI move
-            console.log('AI difficulty:', game.aiDifficulty);
-            
             const aiMoveResult = aiMove(boardState, game.aiDifficulty);
-            console.log('AI move result:', aiMoveResult);
             
             const [[aiFrom, aiTo]] = Object.entries(aiMoveResult);
-            console.log(`AI move from ${aiFrom} to ${aiTo}`);
             
             // Get the AI piece before the move
             const aiPiece = boardState.pieces[aiFrom];
-            console.log('AI piece:', aiPiece);
             
-            const aiFenBeforeMove = getFen(boardState);
             boardState = move(boardState, aiFrom, aiTo);
-            const aiFenAfterMove = getFen(boardState);
-            
-            console.log('AI FEN before move:', aiFenBeforeMove);
-            console.log('AI FEN after move:', aiFenAfterMove);
             
             // Update game state with AI's move
             game.currentBoard = JSON.stringify(boardState);
@@ -154,9 +133,7 @@ const resolvers = {
               to: aiTo, 
               piece: aiPiece,
               timestamp: new Date() 
-            });
-      
-            console.log('Board state after AI move:', game.currentBoard);
+            });      
       
             // Check for game over after AI move
             const aiMoveStatus = status(boardState);

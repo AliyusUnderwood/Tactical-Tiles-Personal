@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://aliyusunderwood:Aliyus77*@cluster0.4dxthcp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
@@ -10,8 +10,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://aliyusunderwood:Aliyu
     process.exit(1);
   });
   
-  mongoose.connection.on('error', err => {
-    console.error('MongoDB connection error:', err);
-  });
+mongoose.connection.on('error', err => {
+  console.error('MongoDB connection error:', err);
+});
 
 module.exports = mongoose.connection;
